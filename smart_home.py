@@ -8,7 +8,7 @@ class SmartHomeEngine():
             try:
                 with open(f, mode="r", encoding="utf-8") as file:
                     self.tasks = json.load(file)
-            except FileNotFoundError:
+            except FileNotFoundError, json.JSONDecodeError:
                 with open(f, mode="w", encoding="utf-8") as file:
                     blank = {}
                     json.dump(blank, file, ensure_ascii=False, indent=4)
@@ -26,8 +26,14 @@ class SmartHomeEngine():
         return f"⚡ Умный дом [{self.json_name}]. Всего сценариев: {len(self.tasks)} | Активных сейчас: {len(self)}"
 
     @decorators.measure_time
-    def add_task(self, name: str, time: str, priority: str,  status: str = "idle") -> None:
+    def add_task(self, name: str, time: str, priority: str = "low",  status: str = "idle") -> None:
         """Добавляет задачу"""
+        if priority != "high" or priority != "low":
+            print("Некорректный приоритет")
+            return None
+        if status != "idle" or status != "active":
+            print("Некорректный статус")
+            return None
         self.tasks[name] = {"time": time, "status": status, "priority": priority}
         self.export()
         return None
@@ -48,8 +54,10 @@ class SmartHomeEngine():
         try:
             if self.tasks[name].get("status") == "idle":
                 self.tasks[name]["status"] = "active"
-            else:
+            elif self.tasks[name].get("status") == "active":
                 self.tasks[name]["status"] = "idle"
+            else:
+                print("Некорректный статус")
         except KeyError:
             print("Такой задачи не существует")
         self.export()
@@ -62,7 +70,29 @@ class SmartHomeEngine():
 
     def get_tasks_names(self) -> list:
         """Возвращает список из названий всех задач"""
-        return ", ".join(self.tasks.keys())
+        return list(self.tasks.keys())
+
+    def sort_tasks_by_priority(self, priority: str) -> dict:
+        """Возвращает отсортированный список по указанному приоритету"""
+        if priority != "high" or priority != "low":
+            return "Указан неверный приоритет"
+        return dict(sorted(self.tasks.items, key=lambda item: item[1]["priority"] != priority))
+
+    # def sort_tasks_by_priority(self):  #код нейронки
+    # priority_order = {
+    #     "high": 1,
+    #     "medium": 2,
+    #     "low": 3
+    # }
+
+    # return dict(
+    #     sorted(
+    #         self.tasks.items(),
+    #         key=lambda item: priority_order.get(
+    #             item[1]["priority"], 999
+    #         )
+    #     )
+    # )
 
     def export(self) -> None:
         """Экспортирует словарь с задачами в json"""

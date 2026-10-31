@@ -6,11 +6,12 @@ def measure_time(func):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        start_time = time.time()
+        start_time = time.perf_counter()
         print(f"[ЗАПУСК]: Выполняется {func.__name__}...")
         result = func(*args, **kwargs)
-        finish_time = time.time() - start_time
-        print(f"[ЗАВЕРШЕНО]: {func.__name__} выполнена за {int(finish_time)} сек.")
+        finish_time = time.perf_counter()
+        result_time = finish_time - start_time
+        print(f"[ЗАВЕРШЕНО]: {func.__name__} выполнена за {result_time:.2f} сек.")
         return result
     return wrapper
 

@@ -35,24 +35,34 @@ class SmartHomeEngine():
     @decorators.measure_time
     def delete_task(self, name: str) -> None:
         """Удаляет задачу"""
-        self.tasks.pop(name)
+        try:
+            self.tasks.pop(name)
+        except KeyError:
+            print("Такой задачи не существует")
         self.export()
         return None
 
     @decorators.measure_time
     def toggle_status(self, name: str) -> None:
         """Изменяет статус выполнения задачи между idle и active"""
-        if self.tasks[name].get("status") == "idle":
-            self.tasks[name]["status"] = "active"
-        else:
-            self.tasks[name]["status"] = "idle"
+        try:
+            if self.tasks[name].get("status") == "idle":
+                self.tasks[name]["status"] = "active"
+            else:
+                self.tasks[name]["status"] = "idle"
+        except KeyError:
+            print("Такой задачи не существует")
         self.export()
         return None
 
     @decorators.measure_time
     def get_tasks(self):
-        """Возвращает список всех задач"""
+        """Возвращает словарь из всех задач"""
         return self.tasks
+
+    def get_tasks_names(self) -> list:
+        """Возвращает список из названий всех задач"""
+        return ", ".join(self.tasks.keys())
 
     def export(self) -> None:
         """Экспортирует словарь с задачами в json"""

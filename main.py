@@ -5,15 +5,15 @@ smart_home = SmartHomeEngine("smarthome_tasks.json")
 user = User()
 
 while True:
-    print("Вас приветствует умный дом")
-    print("""Список доступных комманд:
+    print("\nВас приветствует умный дом")
+    print("""\nСписок доступных комманд:
     1. Состояние системы
     2. Список всех задач
     3. Добавить новую задачу
     4. Запустить/остановить задачу
     5. Удалить задачу
     0. Выход""")
-    ask = user.ask("Что хотите сделать: ")
+    ask = user.ask("\nЧто хотите сделать: ")
     if ask == "1":
         print(smart_home)
     elif ask == "2":
@@ -27,10 +27,12 @@ while True:
             task_status = "idle"
         smart_home.add_task(task_name, task_time, task_priority, task_status)
     elif ask == "4":
+        print(f"Список задач: {smart_home.get_tasks_names()}")
         task_inp = input("Введите название задачи, статус которой хотите изменить: ")
         smart_home.toggle_status(task_inp)
     elif ask == "5":
-        task_inp = input("Введите название задачи, статус которой хотите изменить: ")
+        print(f"Список задач: {smart_home.get_tasks_names()}")
+        task_inp = input("Введите название задачи, которую хотите удалить: ")
         smart_home.delete_task(task_inp)
     elif ask == "0":
         break

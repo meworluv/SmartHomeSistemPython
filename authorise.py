@@ -1,7 +1,7 @@
 class User():
     """Класс пользователя"""
-    def __init__(self) -> None:
-        self.__pass = "123321"
+    # def __init__(self) -> None:
+        # self.__pass = "123321"
     
     # @property
     # def level(self):
